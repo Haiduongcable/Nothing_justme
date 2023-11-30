@@ -9,6 +9,20 @@ from faiss import write_index, read_index
 from pyvi.ViTokenizer import tokenize
 from sentence_transformers import SentenceTransformer
 import difflib
+from rank_bm25 import BM25Okapi
+from preprocess.vietnamese_preprocess import tien_xu_li
+
+
+def init_bm25(data):
+    l_data_with_explanation = []
+    l_tokens = []
+    for item in data:
+        if "explanation" in item:
+            l_data_with_explanation.append(item)
+            normalize_question = tien_xu_li(item["question"])
+            l_tokens.append(normalize_question.split(" "))
+    bm25 = BM25Okapi(l_tokens) 
+    return bm25, l_data_with_explanation
 
 def compare_string(result, cleaned_choices):
     close_matches = difflib.get_close_matches(str(result), 
@@ -71,6 +85,25 @@ def generate_prompt_based_on_train(current_question, choices_str, search_faiss,\
             continue
     prompt += "\n\n" + "Câu hỏi: " + current_question + "\n" +\
               choices_str + "\nSolution:"
+    return prompt
+
+def generate_prompt_based_on_train_bm25(current_question, choices_str, bm25,\
+    prefix_prompt,l_data_with_explanation, num_used = 2):
+    #Searching
+    sentences = tien_xu_li(current_question)
+    tokenized_query = sentences.split(" ")
+    l_selected_data = bm25.get_top_n(tokenized_query, l_data_with_explanation, n=num_used)
+    prompt = prefix_prompt
+    for selected_data in l_selected_data:
+        selected_question = selected_data["question"].replace("\n", "").replace("\t", "")
+        selected_choices = "\n".join(selected_data["choices"])
+        selected_correct_answer = selected_data["answer"]
+        selected_explanation = selected_data["explanation"].replace("\n", "").replace("\t", "")
+        prompt += "\n\n" + "Câu hỏi: " + selected_question + "\n" +\
+                selected_choices + "\n" + "Solution: " +  selected_explanation\
+                + "\n" + "Correct answer: " + selected_correct_answer
+    prompt += "\n\n" + "Câu hỏi: " + current_question + "\n" +\
+              choices_str + "\nSolution: "
     return prompt
 
 def get_question_choices_prompt(item):
