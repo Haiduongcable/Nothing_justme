@@ -1,5 +1,9 @@
 FROM nvidia/cuda:12.2.0-devel-ubuntu20.04
 
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Ho_Chi_Minh
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #Install libs
 RUN apt-get update --fix-missing && apt-get install -y \
 			g++ \
@@ -15,10 +19,6 @@ RUN apt-get update --fix-missing && apt-get install -y \
 RUN apt-get install -y libenchant1c2a
 
 # Language and timezone
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-ENV TZ=Asia/Ho_Chi_Minh
-RUN apt-get install -y tzdata && echo $TZ > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 # Install packages
 RUN pip3 install --upgrade pip
@@ -44,5 +44,3 @@ RUN pip3 install scipy
 # Add
 ADD . /code/
 WORKDIR /code/
-RUN chmod 777 run_predict.sh
-CMD ./run_predict.sh

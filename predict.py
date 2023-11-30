@@ -17,8 +17,12 @@ from preprocess.process_numeric_math import process_numeric_math
 from preprocess.process_unit_math import preprocess_unit_math
 from config import config
 model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
-PATH_TRAIN_CSV = "data/math_train.json"
-PATH_TEST_CSV = "data/math_test.json"
+if config["DELOY_KAGGLE"]:
+    PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
+    PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
+else:
+    PATH_TRAIN_CSV = "data/math_train.json"
+    PATH_TEST_CSV = "data/math_test.json"
 search_faiss = read_index("train.index")
 model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base', device = torch.device("cpu"))
 
