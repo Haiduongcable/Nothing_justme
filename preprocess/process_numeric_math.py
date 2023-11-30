@@ -8,7 +8,7 @@ import unicodedata
 import re, sys, json, os 
 import re
 import unicodedata
-from numeric_case import *
+from preprocess.numeric_case import *
 import difflib
 
 def compare_string(result, cleaned_choices):

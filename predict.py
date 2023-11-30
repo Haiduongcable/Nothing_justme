@@ -15,22 +15,25 @@ import pandas as pd
 from utils import generate_prompt_based_on_train, get_final_choices
 from preprocess.process_numeric_math import process_numeric_math
 from preprocess.process_unit_math import preprocess_unit_math
+from config import config
 model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
 PATH_TRAIN_CSV = "data/math_train.json"
 PATH_TEST_CSV = "data/math_test.json"
 search_faiss = read_index("train.index")
 model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base', device = torch.device("cpu"))
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
-max_memory_mapping = {0: "24GB"}
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
-                                             device_map="auto",
-                                             trust_remote_code=True,
-                                             load_in_4bit=True,
-#                                              load_in_8bit=False,
-                                             # offload_state_dict=True,
-                                             # low_cpu_mem_usage=True,
-                                             # bf16=True,
-                                             max_memory=max_memory_mapping).eval()
+
+if config["USE_MODEL"]:
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
+    max_memory_mapping = {0: "16GB"}
+    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
+                                                device_map="auto",
+                                                trust_remote_code=True,
+                                                load_in_4bit=True,
+    #                                              load_in_8bit=False,
+                                                # offload_state_dict=True,
+                                                # low_cpu_mem_usage=True,
+                                                # bf16=True,
+                                                max_memory=max_memory_mapping).eval()
 
 prefix_prompt = '''
 You are a virtual assistant capable of answering math questions honestly and accurately, without fabricating additional content.
@@ -104,18 +107,22 @@ for idx, item in tqdm(enumerate(data_test["data"])):
         if choice != None and len(choice) != 0:
             cleaned_choices.append(choice)
     choices_str = "\n".join(cleaned_choices)
-    prompt = generate_prompt_based_on_train(question,\
-                                            choices_str,\
-                                            search_faiss,\
-                                            model_embedding,\
-                                            prefix_prompt,\
-                                            data_train["data"])
-    inputs = tokenizer([prompt], return_tensors="pt").to('cuda')
-    res = model.generate(**inputs,  max_new_tokens=200,temperature=0.01)
-    output = tokenizer.decode(res.cpu()[0], skip_special_tokens=True)
-    answer_responce = get_final_choices(item, output)
-    l_submit_ids.append(id)
-    l_submit_answers.append(answer_responce)
+    if config["USE_MODEL"]:
+        prompt = generate_prompt_based_on_train(question,\
+                                                choices_str,\
+                                                search_faiss,\
+                                                model_embedding,\
+                                                prefix_prompt,\
+                                                data_train["data"])
+        inputs = tokenizer([prompt], return_tensors="pt").to('cuda')
+        res = model.generate(**inputs,  max_new_tokens=200,temperature=0.01)
+        output = tokenizer.decode(res.cpu()[0], skip_special_tokens=True)
+        answer_responce = get_final_choices(item, output)
+        l_submit_ids.append(id)
+        l_submit_answers.append(answer_responce)
+    else:
+        l_submit_ids.append(id)
+        l_submit_answers.append(item["choices"][0])
 
 df_submit = pd.DataFrame()
 

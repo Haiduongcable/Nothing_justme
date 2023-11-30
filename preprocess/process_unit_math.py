@@ -5,9 +5,9 @@ import json
 import cv2 
 import math 
 import pandas as pd 
-from process_unit_math import handle_distance, handle_area, handle_volume, handle_weight, handle_time
+from preprocess.unit_case import handle_distance, handle_area, handle_volume, handle_weight, handle_time
 import difflib
-from vietnamese_preprocess import tien_xu_li
+from preprocess.vietnamese_preprocess import tien_xu_li
 import sys
 
 
@@ -107,64 +107,3 @@ def preprocess_unit_math(item):
         else:
             selected_idx = compare_string(result, cleaned_str_choices)
         return True, choices[selected_idx]
-    
-# question_str = "Số thích hợp cần điền vào chỗ chấm để 45,5 giờ = …….giờ ....phút là "
-# status, result = process_unit_case(question_str)
-# print(result)
-# print(round(result, 6))
-# l_used_id = []
-# # path_submit = "/hdd4/duongnh/project/ZaloAIChallenge/output_submit"
-# # # for nfile in os.listdir(path_submit):
-file_test = open("/hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving/math_train.json", 'r')
-data_test = json.load(file_test)["data"]
-count = 0
-for idx, item in enumerate(data_test):
-    status, answer_responce = preprocess_unit_math(item)
-#     # # if idx != 319:
-#     # #     continue
-#     # question = item["question"]
-#     # question_str = question.replace("\n", "").replace("\t", "").lower()
-#     # question_str = tien_xu_li(question_str)
-#     # choices = item["choices"]
-#     # status, result = process_unit_case(question_str)
-    if status:
-        label_choice = item["answer"]
-        if label_choice != answer_responce:
-            print("IDX: ", idx)
-            print("Question: ", item["question"])
-            print(item["choices"])
-            print("__________")
-            print("Result: ", answer_responce)
-            print("Labels: ", label_choice)
-        count += 1
-print("Count: ", count)
-
-
-# with open("/hdd4/duongnh/project/ZaloAIChallenge/temp/ignore_id.txt", 'a') as file:
-#     for idx in l_used_id:
-#         file.write(str(idx) + "\n")
-# file.close()
-
-# df_out = pd.DataFrame()
-# df_out["id"] = l_ids
-# df_out["answer"] = l_answer
-# df_out.to_csv("/hdd4/duongnh/project/ZaloAIChallenge/output_submit/submission_qwen_14b_best_28_11_update_v2.csv", index = False)
-# # print("Done")
-
-'''
-xử lý dạng 300 000 đã 
-
-Khử các case sau: cộng trừ nhân chia/ có số 
-Hoặc là dạng 3km 5dm 6hm (éo hiểu thằng cặc nào nghĩ ra case này)
-
-
-Xử luôn case mà cộng trừ nhân chia 
-
-Xử luôn case mà dùng đến phép chia
-
-Xử case dùng đến thời gian, tốc độ, gia tốc (chơi hết).
-Destroy chúng nó. 
-
-Xử luôn case giá trị/ kết quả của biểu thức: (câu này xuất hiện 30 lần trong train với nhiều hình dạng khác nhau)
-
-'''
