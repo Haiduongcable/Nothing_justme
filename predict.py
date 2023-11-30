@@ -133,4 +133,7 @@ df_submit = pd.DataFrame()
 
 df_submit["id"] = l_submit_ids
 df_submit["answer"] = l_submit_answers
-df_submit.to_csv("result/submission.csv", index = False)
+if config["DELOY_KAGGLE"]:
+    df_submit.to_csv("/kaggle/working/submission.csv", index = False)
+else:
+    df_submit.to_csv("result/submission.csv", index = False)
