@@ -111,13 +111,14 @@ for idx, item in tqdm(enumerate(data_test["data"])):
         if choice != None and len(choice) != 0:
             cleaned_choices.append(choice)
     choices_str = "\n".join(cleaned_choices)
+    
+    prompt = generate_prompt_based_on_train(question,\
+                                            choices_str,\
+                                            search_faiss,\
+                                            model_embedding,\
+                                            prefix_prompt,\
+                                            data_train["data"])
     if config["USE_MODEL"]:
-        prompt = generate_prompt_based_on_train(question,\
-                                                choices_str,\
-                                                search_faiss,\
-                                                model_embedding,\
-                                                prefix_prompt,\
-                                                data_train["data"])
         inputs = tokenizer([prompt], return_tensors="pt").to('cuda')
         res = model.generate(**inputs,  max_new_tokens=200,temperature=0.01)
         output = tokenizer.decode(res.cpu()[0], skip_special_tokens=True)

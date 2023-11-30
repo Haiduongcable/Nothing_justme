@@ -34,14 +34,14 @@ def generate_prompt_based_on_train(current_question, choices_str, search_faiss, 
             if num_used == 0:
                 break
             selected_explanation = data_train[idx]["explanation"].replace("\n", "").replace("\t", "")
-            prompt += "\n\n" + "Question:\n" + selected_question + "\n" +\
+            prompt += "\n\n" + "Question:\n" + selected_question + "\nOptions:\n" +\
                     selected_choices + "\n" + "Solution: " +  selected_explanation +\
-                    "Options:\n"+ + "Correct answer: " + selected_correct_answer
+                    "Options:\n"+ "Correct answer: " + selected_correct_answer
             num_used -= 1
         else:
             continue
     prompt += "\n\n" + "Question:\n" + current_question +\
-              "Options:\n" +choices_str + "\nSolution:"
+              "\nOptions:\n" +choices_str + "\nSolution:"
     return prompt
 
 def get_question_choices_prompt(item):
