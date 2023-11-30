@@ -9,7 +9,10 @@ from faiss import write_index, read_index
 from pyvi.ViTokenizer import tokenize
 from sentence_transformers import SentenceTransformer
 from config import config
-model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
+if config["DELOY_KAGGLE"]:
+    model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
+else:
+    model_embedding = SentenceTransformer('pretrained/sup-SimCSE-VietNamese-phobert-base')
 
 if config["DELOY_KAGGLE"]:
     PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_train.json"

@@ -17,7 +17,6 @@ from preprocess.process_numeric_math import process_numeric_math
 from preprocess.process_unit_math import preprocess_unit_math
 from config import config
 from transformers import BitsAndBytesConfig
-model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
 if config["DELOY_KAGGLE"]:
     PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
     PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
@@ -25,11 +24,12 @@ else:
     PATH_TRAIN_CSV = "data/math_train.json"
     PATH_TEST_CSV = "data/math_test.json"
 search_faiss = read_index("train.index")
-model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base', device = torch.device("cpu"))
+if config["DELOY_KAGGLE"]:
+    model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
+else:
+    model_embedding = SentenceTransformer('pretrained/sup-SimCSE-VietNamese-phobert-base', device = torch.device("cpu"))
 
 if config["USE_MODEL"]:
-    
-
     nf4_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
@@ -48,9 +48,8 @@ prefix_prompt = '''
 You are a virtual assistant capable of answering math questions honestly and accurately, without fabricating additional content.
 Based on the following multiple choice questions, let's think step by step, come up with a solution and choose the correct answer.
 
-Question:
+Câu hỏi:
 Một người bán hàng bỏ ra 80,000 đồng tiền vốn và bị lỗ 6%. Để tính số tiền lỗ ta phải tính?
-Options:
 A. 80,000 : 6
 B. 80,000 x 6
 C. 80,000 : (6 x 100)
@@ -58,9 +57,8 @@ D. (80,000 x 6) : 100
 Solution: Theo đề bài, số tiền lỗ bằng 6% của 80 000 đồng . Để tìm số tiền lỗ ta có thể lấy 80 000 chia cho 100 rồi nhân với 6 (tức là 80 000 : 100 × 6) hoặc lấy 80000 nhân với 6 rồi chia cho 100 (tức là 80 000 × 6 : 100).
 Correct answer: D. (80,000 x 6) : 100
 
-Question:
+Câu hỏi:
 8 dm2 24 cm2 = ……… dm2. Số thích hợp điền vào chỗ chấm là?
-Options:
 A. 824
 B. 82,4
 C. 8,24
@@ -68,16 +66,25 @@ D. 0,824
 Solution: Ta có 24 cm2 = 0,24 dm2 Vậy 8 dm2 24 cm2 = 8,24 dm2.
 Correct answer: C. 8,24
 
-Question:
+Câu hỏi:
 10% của 11,5m2 là?
-Options:
 A. 10,15dm2
 B. 1,5m2
 C. 15,5m2
 D. 1,15m2
 Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).
 Correct answer: D. 1,15m2
+
+Câu hỏi:
+10% của 11,5m2 là?
+A. 10,15dm2
+B. 1,5m2
+C. 15,5m2
+D. 1,15m2
+Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).   
+Correct answer: D. 1,15m2
 '''
+
 
 file_test = open(PATH_TEST_CSV, 'r')
 data_test = json.load(file_test)
@@ -125,7 +132,7 @@ for idx, item in tqdm(enumerate(data_test["data"])):
                                             data_train["data"])
     if config["USE_MODEL"]:
         inputs = tokenizer([prompt], return_tensors="pt").to('cuda')
-        res = model.generate(**inputs,  max_new_tokens=200,temperature=0.01)
+        res = model.generate(**inputs,  max_new_tokens=250,temperature=0.01)
         output = tokenizer.decode(res.cpu()[0], skip_special_tokens=True)
         answer_responce = get_final_choices(item, output)
         l_submit_ids.append(id)
@@ -141,4 +148,6 @@ df_submit["answer"] = l_submit_answers
 if config["DELOY_KAGGLE"]:
     df_submit.to_csv("/kaggle/working/submission.csv", index = False)
 else:
+    if not os.path.exists("result"):
+        os.mkdir("result")
     df_submit.to_csv("result/submission.csv", index = False)
