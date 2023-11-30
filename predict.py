@@ -30,16 +30,17 @@ else:
     model_embedding = SentenceTransformer('pretrained/sup-SimCSE-VietNamese-phobert-base', device = torch.device("cpu"))
 
 if config["USE_MODEL"]:
-    nf4_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type='nf4'
-        )
+    # nf4_config = BitsAndBytesConfig(
+    #         load_in_4bit=True,
+    #         bnb_4bit_compute_dtype=torch.bfloat16,
+    #         bnb_4bit_use_double_quant=True,
+    #         bnb_4bit_quant_type='nf4'
+    #     )
     tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
     max_memory_mapping = {0: "16GB"}
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
-                                                quantization_config = nf4_config,
+                                                # quantization_config = nf4_config,
+                                                load_in_4bit=True,
                                                 device_map="auto",
                                                 trust_remote_code=True,
                                                 max_memory=max_memory_mapping).eval()
