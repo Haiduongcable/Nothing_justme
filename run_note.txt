@@ -1,3 +1,3 @@
-docker run --gpus "device=0" -v /data:/data -v /home/zdeploy/zac2023/:/result zac2023:v1 /bin/bash /code/predict.sh
-docker run -it --gpus '"device=0"' -p9777:9777 -v /data:/data -v /home/zdeploy/AILab/zac2023/:/result zac2023:v1 /bin/bash /code/start_jupyter.sh
+docker run --gpus "device=0" -v /data:/data -v /data:/pretrained/models--Qwen--Qwen-14B -v /home/zdeploy/zac2023/:/result zac2023:v1 /bin/bash /code/predict.sh
+docker run -it --gpus "device=0" -p9777:9777 -v /data:/data -v /home/zdeploy/AILab/zac2023/:/result zac2023:v1 /bin/bash /code/start_jupyter.sh
 
