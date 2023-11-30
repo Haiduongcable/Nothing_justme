@@ -16,6 +16,7 @@ from utils import generate_prompt_based_on_train, get_final_choices
 from preprocess.process_numeric_math import process_numeric_math
 from preprocess.process_unit_math import preprocess_unit_math
 from config import config
+from transformers import BitsAndBytesConfig
 model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base')
 if config["DELOY_KAGGLE"]:
     PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
@@ -27,16 +28,15 @@ search_faiss = read_index("train.index")
 model_embedding = SentenceTransformer('VoVanPhuc/sup-SimCSE-VietNamese-phobert-base', device = torch.device("cpu"))
 
 if config["USE_MODEL"]:
+    
+
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)
     tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
     max_memory_mapping = {0: "16GB"}
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
+                                                quantization_config,
                                                 device_map="auto",
                                                 trust_remote_code=True,
-                                                load_in_4bit=True,
-    #                                              load_in_8bit=False,
-                                                # offload_state_dict=True,
-                                                # low_cpu_mem_usage=True,
-                                                # bf16=True,
                                                 max_memory=max_memory_mapping).eval()
 
 prefix_prompt = '''
