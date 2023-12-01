@@ -42,14 +42,14 @@ if config["USE_MODEL"]:
     #                                             trust_remote_code=True,
     #                                             max_memory=max_memory_mapping, cache_dir='pretrained').eval()
     
-    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True, cache_dir='pretrained/pretrained_tokenizer')
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
     max_memory_mapping = {0: "24GB"}
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
                                                 # quantization_config = nf4_config,
                                                 load_in_4bit=True,
                                                 device_map="auto",
                                                 trust_remote_code=True,
-                                                max_memory=max_memory_mapping, cache_dir='pretrained/pretrained_model').eval()
+                                                max_memory=max_memory_mapping).eval()
 
 prefix_prompt = '''
 You are a virtual assistant capable of answering math questions honestly and accurately, without fabricating additional content.
