@@ -16,13 +16,16 @@ from preprocess.process_numeric_math import process_numeric_math
 from preprocess.process_unit_math import preprocess_unit_math
 from config import config
 from transformers import BitsAndBytesConfig
+config["DELOY_KAGGLE"] = True
 if config["DELOY_KAGGLE"]:
     PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
     PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
 else:
-    PATH_TRAIN_CSV = "data/math_train.json"
-    PATH_TEST_CSV = "data/math_test.json"
+    PATH_TRAIN_CSV = "/data/math_train.json"
+    PATH_TEST_CSV = "/data/math_test.json"
 
+
+    
 if config["USE_MODEL"]:
     # nf4_config = BitsAndBytesConfig(
     #         load_in_4bit=True,
@@ -30,14 +33,23 @@ if config["USE_MODEL"]:
     #         bnb_4bit_use_double_quant=True,
     #         bnb_4bit_quant_type='nf4'
     #     )
-    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
-    max_memory_mapping = {0: "16GB"}
+    # tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-7B", trust_remote_code=True, cache_dir='pretrained/tokenizers_pretrained')
+    # max_memory_mapping = {0: "16GB"}
+    # model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-7B",
+    #                                             # quantization_config = nf4_config,
+    #                                             load_in_4bit=True,
+    #                                             device_map="auto",
+    #                                             trust_remote_code=True,
+    #                                             max_memory=max_memory_mapping, cache_dir='pretrained').eval()
+    
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True, cache_dir='pretrained/pretrained_tokenizer')
+    max_memory_mapping = {0: "24GB"}
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
                                                 # quantization_config = nf4_config,
                                                 load_in_4bit=True,
                                                 device_map="auto",
                                                 trust_remote_code=True,
-                                                max_memory=max_memory_mapping).eval()
+                                                max_memory=max_memory_mapping, cache_dir='pretrained/pretrained_model').eval()
 
 prefix_prompt = '''
 You are a virtual assistant capable of answering math questions honestly and accurately, without fabricating additional content.
@@ -69,8 +81,16 @@ C. 15,5m2
 D. 1,15m2
 Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).
 Correct answer: D. 1,15m2
-'''
 
+Câu hỏi:
+10% của 11,5m2 là?
+A. 10,15dm2
+B. 1,5m2
+C. 15,5m2
+D. 1,15m2
+Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).   
+Correct answer: D. 1,15m2
+'''
 
 file_test = open(PATH_TEST_CSV, 'r')
 data_test = json.load(file_test)
@@ -119,7 +139,7 @@ for idx, item in tqdm(enumerate(data_test["data"])):
                                             num_used=0)
     if config["USE_MODEL"]:
         inputs = tokenizer([prompt], return_tensors="pt").to('cuda')
-        res = model.generate(**inputs,  max_new_tokens=250,temperature=0.01)
+        res = model.generate(**inputs,  max_new_tokens=200,temperature=0.01)
         output = tokenizer.decode(res.cpu()[0], skip_special_tokens=True)
         answer_responce = get_final_choices(item, output)
         l_submit_ids.append(id)
@@ -135,6 +155,6 @@ df_submit["answer"] = l_submit_answers
 if config["DELOY_KAGGLE"]:
     df_submit.to_csv("/kaggle/working/submission.csv", index = False)
 else:
-    if not os.path.exists("result"):
-        os.mkdir("result")
-    df_submit.to_csv("result/submission.csv", index = False)
+    if not os.path.exists("/result"):
+        os.mkdir("/result")
+    df_submit.to_csv("/result/submission.csv", index = False)
