@@ -1,5 +1,6 @@
-# FROM nvidia/cuda:11.8.0-devel-ubuntu20.04
-FROM nvidia/cuda:11.4.3-devel-ubuntu20.04
+FROM nvidia/cuda:12.2.0-devel-ubuntu20.04
+
+#FROM nvidia/cuda:11.4.3-devel-ubuntu20.04
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ENV TZ=Asia/Ho_Chi_Minh

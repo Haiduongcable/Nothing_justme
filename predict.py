@@ -42,7 +42,7 @@ if config["USE_MODEL"]:
     #                                             max_memory=max_memory_mapping, cache_dir='pretrained').eval()
     
     tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True, cache_dir='pretrained/pretrained_tokenizer')
-    max_memory_mapping = {0: "16GB"}
+    max_memory_mapping = {0: "24GB"}
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
                                                 # quantization_config = nf4_config,
                                                 load_in_4bit=True,
