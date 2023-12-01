@@ -1,0 +1,6 @@
+--2023-12-01 16:18:47--  https://docs.google.com/uc?id=0B3X9GlR6EmbnWksyTEtCM0VfaFE
+Resolving docs.google.com (docs.google.com)... 172.217.24.78, 2404:6800:4005:807::200e
+Connecting to docs.google.com (docs.google.com)|172.217.24.78|:443... connected.
+HTTP request sent, awaiting response... 404 Not Found
+2023-12-01 16:18:48 ERROR 404: Not Found.
+

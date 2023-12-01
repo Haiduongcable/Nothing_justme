@@ -9,8 +9,5 @@ docker run --gpus '"device=0"' -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_
 docker run -it --gpus '"device=0"' -p9777:9777 -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output/:/result zac2023:v1 /bin/bash /code/start_jupyter.sh
 
 
-#tag docker vao
-chay jupyter 
-zac2023                                                                      v1                                  a4c2383de5d5   11 minutes ago   39.8GB
-<none>                                                                       <none>                              c5270d46cd56   11 minutes ago   39.8GB
-zac2023                                                                      latest                              036a8e2636b1   12 minutes ago   39.8GB
+
+docker save -o /hdd4/duongnh/data/zalo_2023/zac2023.tar.gz zac2023:v1
