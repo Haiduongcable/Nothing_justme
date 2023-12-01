@@ -1,6 +1,16 @@
 docker run --gpus "device=0" -v /data:/data -v /data:/pretrained/models--Qwen--Qwen-14B -v /home/zdeploy/zac2023/:/result zac2023/bin/bash /code/predict.sh
-docker run -it --gpus "device=0" -p9777:9777 -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result zac2023 mrnody_images /bin/bash /code/predict.sh
+docker run -it --gpus "device=0" -p9777:9777 -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result zac2023 zac2023 /bin/bash /code/predict.sh
 
 
-docker run --gpus '"device=0"' --network host -it --name zac2023 mrnody_images /bin/bash
-docker run --gpus 'device=0' --network host -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result -it --name zac2023 mrnody_images bash
+docker run --gpus '"device=0"' -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result --network host -it --name zac2023 zac2023 /bin/bash
+docker commit zac2023 zac2023:v1
+
+docker run --gpus '"device=0"' -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result zac2023:v1 /bin/bash /code/predict.sh
+docker run -it --gpus '"device=0"' -p9777:9777 -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output/:/result zac2023:v1 /bin/bash /code/start_jupyter.sh
+
+
+#tag docker vao
+chay jupyter 
+zac2023                                                                      v1                                  a4c2383de5d5   11 minutes ago   39.8GB
+<none>                                                                       <none>                              c5270d46cd56   11 minutes ago   39.8GB
+zac2023                                                                      latest                              036a8e2636b1   12 minutes ago   39.8GB

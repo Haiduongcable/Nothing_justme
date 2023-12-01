@@ -106,12 +106,12 @@ def generate_prompt_based_on_train_bm25(current_question, choices_str, bm25,\
               choices_str + "\nSolution: "
     return prompt
 
-def generate_prompt_no_search(current_question, choices_str,
-    prefix_prompt):
-    #Searching
-    prompt += "\n\n" + "Câu hỏi: " + current_question + "\n" +\
-              choices_str + "\nSolution: "
-    return prompt
+# def generate_prompt_no_search(current_question, choices_str,
+#     prefix_prompt):
+#     #Searching
+#     prompt += "\n\n" + "Câu hỏi: " + current_question + "\n" +\
+#               choices_str + "\nSolution: "
+#     return prompt
 
 def get_question_choices_prompt(item):
     question = item["question"]
@@ -132,7 +132,16 @@ def get_question_choices_prompt(item):
               choices_str + "\nSolution:"
     return question_choices_prompt, cleaned_choices
 
-
+def get_answer_without_ABCD(tmp_output, cleaned_choices):
+    tmp_output = tmp_output.replace("\n", "")
+    for choice in cleaned_choices:
+        if choice in tmp_output:
+            answer = choice
+            return answer
+    idx_answer = compare_string(tmp_output[:20], cleaned_choices)
+    answer = cleaned_choices[idx_answer]
+    return answer
+    
 
 def get_final_choices(item_input, output_responce):
     question_choices_prompt, cleaned_choices = get_question_choices_prompt(item_input)
@@ -173,7 +182,6 @@ def get_final_choices(item_input, output_responce):
         print("Question: ", item_input["question"])
         print("Output: ", tmp_output.replace("\n", ""))
         print("#############")
-        idx_answer = 0
-        answer = cleaned_choices[idx_answer]
+        answer = get_answer_without_ABCD(tmp_output, cleaned_choices)
     return answer
     
