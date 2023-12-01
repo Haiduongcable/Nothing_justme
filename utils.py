@@ -133,12 +133,13 @@ def get_question_choices_prompt(item):
     return question_choices_prompt, cleaned_choices
 
 def get_answer_without_ABCD(tmp_output, cleaned_choices):
-    tmp_output = tmp_output.replace("\n", "")
+    tmp_output = tmp_output.replace("\n", "").lower()
     for choice in cleaned_choices:
+        choice = choice.replace("a.", "").replace("b.", "").replace("c.", "").replace("d.", "")
         if choice in tmp_output:
             answer = choice
             return answer
-    idx_answer = compare_string(tmp_output[:20], cleaned_choices)
+    idx_answer = 0
     answer = cleaned_choices[idx_answer]
     return answer
     
