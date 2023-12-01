@@ -23,8 +23,6 @@ else:
     PATH_TRAIN_CSV = "data/math_train.json"
     PATH_TEST_CSV = "data/math_test.json"
 
-
-    
 if config["USE_MODEL"]:
     # nf4_config = BitsAndBytesConfig(
     #         load_in_4bit=True,
@@ -73,13 +71,22 @@ Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).
 Correct answer: D. 1,15m2
 
 Câu hỏi:
-10% của 11,5m2 là?
-A. 10,15dm2
-B. 1,5m2
-C. 15,5m2
-D. 1,15m2
-Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).   
-Correct answer: D. 1,15m2
+Làm tròn số 23 538 đến hàng nghìn ta được:
+A. 23 500
+B. 24 000
+C. 30 000
+D. 20 000
+Solution: Làm tròn số 23 538 đến hàng nghìn ta xét chữ số hàng trăm. Vậy làm tròn số 23 538 đến hàng nghìn ta được số 24 000.
+Correct answer: B. 24 000
+
+Câu hỏi:
+Luân đi đến trường là 30 phút với vận tốc 4 km/giờ. Hỏi quãng đường từ nhà Luân đến trường là bao nhiêu kí-lô-mét?
+A. 8 km
+B. 4 km
+C. 2 km
+D. 6 km
+Solution: Theo đề bài: 30 phút = 0.5 giờ => quãng đường = 4 \\times 0.5 = 2 (km)
+Correct answer: C. 2 km
 '''
 
 

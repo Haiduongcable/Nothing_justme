@@ -106,6 +106,13 @@ def generate_prompt_based_on_train_bm25(current_question, choices_str, bm25,\
               choices_str + "\nSolution: "
     return prompt
 
+def generate_prompt_no_search(current_question, choices_str,
+    prefix_prompt):
+    #Searching
+    prompt += "\n\n" + "Câu hỏi: " + current_question + "\n" +\
+              choices_str + "\nSolution: "
+    return prompt
+
 def get_question_choices_prompt(item):
     question = item["question"]
     question = question.replace("\n", "").replace("\t", "")

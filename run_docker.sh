@@ -1,1 +1,1 @@
-docker run --gpus "device=0" --network host -it --name zac2023 mrnody_images /bin/bash
+docker run --gpus "device=0" -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output/:/result mrnody_images /bin/bash /code/predict.sh

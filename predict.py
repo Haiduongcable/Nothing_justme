@@ -32,14 +32,14 @@ if config["USE_MODEL"]:
     #         bnb_4bit_use_double_quant=True,
     #         bnb_4bit_quant_type='nf4'
     #     )
-    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-7B", trust_remote_code=True, cache_dir='pretrained/tokenizers_pretrained')
     max_memory_mapping = {0: "16GB"}
-    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
+    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-7B",
                                                 # quantization_config = nf4_config,
                                                 load_in_4bit=True,
                                                 device_map="auto",
                                                 trust_remote_code=True,
-                                                max_memory=max_memory_mapping).eval()
+                                                max_memory=max_memory_mapping, cache_dir='pretrained').eval()
 
 prefix_prompt = '''
 You are a virtual assistant capable of answering math questions honestly and accurately, without fabricating additional content.
@@ -81,7 +81,6 @@ D. 1,15m2
 Solution: 10% của 11,5m2 là: 11,5 ${\\times}$ 10 : 100 = 1,15 (m2).   
 Correct answer: D. 1,15m2
 '''
-
 
 file_test = open(PATH_TEST_CSV, 'r')
 data_test = json.load(file_test)
@@ -127,7 +126,7 @@ for idx, item in tqdm(enumerate(data_test["data"])):
                                             bm25=bm25_index,\
                                             prefix_prompt=prefix_prompt,\
                                             l_data_with_explanation=l_data_with_explanation,\
-                                            num_used=2)
+                                            num_used=0)
     if config["USE_MODEL"]:
         inputs = tokenizer([prompt], return_tensors="pt").to('cuda')
         res = model.generate(**inputs,  max_new_tokens=250,temperature=0.01)
