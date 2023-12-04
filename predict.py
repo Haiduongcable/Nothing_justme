@@ -18,37 +18,32 @@ from config import config
 from transformers import BitsAndBytesConfig
 if config["DELOY_KAGGLE"]:
     PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
-    PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
+    #PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
+    PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/math_test_b.json"
 else:
     PATH_TRAIN_CSV = "/data/math_train.json"
     PATH_TEST_CSV = "/data/math_test.json"
-
-
     
-if config["USE_MODEL"]:
-    # nf4_config = BitsAndBytesConfig(
-    #         load_in_4bit=True,
-    #         bnb_4bit_compute_dtype=torch.bfloat16,
-    #         bnb_4bit_use_double_quant=True,
-    #         bnb_4bit_quant_type='nf4'
-    #     )
-    # tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-7B", trust_remote_code=True, cache_dir='pretrained/tokenizers_pretrained')
-    # max_memory_mapping = {0: "16GB"}
-    # model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-7B",
-    #                                             # quantization_config = nf4_config,
-    #                                             load_in_4bit=True,
-    #                                             device_map="auto",
-    #                                             trust_remote_code=True,
-    #                                             max_memory=max_memory_mapping, cache_dir='pretrained').eval()
     
-    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True, cache_dir='pretrained/pretrained_tokenizer')
-    max_memory_mapping = {0: "24GB"}
+if config["DELOY_KAGGLE"]:
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True)
+    max_memory_mapping = {0: "16GB"}
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
                                                 # quantization_config = nf4_config,
                                                 load_in_4bit=True,
                                                 device_map="auto",
                                                 trust_remote_code=True,
-                                                max_memory=max_memory_mapping, cache_dir='pretrained/pretrained_model').eval()
+                                                max_memory=max_memory_mapping).eval()
+else:
+    if config["USE_MODEL"]:
+        tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-14B", trust_remote_code=True, cache_dir='pretrained/pretrained_tokenizer')
+        max_memory_mapping = {0: "24GB"}
+        model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-14B",
+                                                    # quantization_config = nf4_config,
+                                                    load_in_4bit=True,
+                                                    device_map="auto",
+                                                    trust_remote_code=True,
+                                                    max_memory=max_memory_mapping, cache_dir='pretrained/pretrained_model').eval()
 
 prefix_prompt = '''
 You are a virtual assistant capable of answering math questions honestly and accurately, without fabricating additional content.

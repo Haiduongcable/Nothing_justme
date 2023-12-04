@@ -4,6 +4,7 @@ docker run -it --gpus "device=0" -p9777:9777 -v /hdd4/duongnh/project/ZaloAIChal
 
 docker run --gpus '"device=0"' -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result --network host -it --name zac2023 zac2023 /bin/bash
 docker commit zac2023 zac2023:v1
+docker save -o zac2023.tar.gz zac2023:v1
 
 docker run --gpus '"device=0"' -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output:/result zac2023:v1 /bin/bash /code/predict.sh
 docker run -it --gpus '"device=0"' -p9777:9777 -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_ai_2023_elementary_maths_solving:/data -v /hdd4/duongnh/project/ZaloAIChallenge/zalo_output/:/result zac2023:v1 /bin/bash /code/start_jupyter.sh
