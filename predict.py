@@ -16,10 +16,22 @@ from preprocess.process_numeric_math import process_numeric_math
 from preprocess.process_unit_math import preprocess_unit_math
 from config import config
 from transformers import BitsAndBytesConfig
+import argparse
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--path_train_csv')
+parser.add_argument('--path_test_csv')
+
+args = parser.parse_args()
+
+
 if config["DELOY_KAGGLE"]:
-    PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
-    #PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
-    PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/math_test_b.json"
+    # PATH_TRAIN_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/zalo_ai_2023_elementary_maths_solving/math_train.json"
+    # #PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/zalo_ai_2023_elementary_maths_solving/math_test.json"
+    # PATH_TEST_CSV = "/kaggle/input/zalo-ai-2023-elementaty-maths-solving/math_test_b.json"
+    
+    PATH_TRAIN_CSV = args.path_train_csv
+    PATH_TEST_CSV = args.path_test_csv
 else:
     PATH_TRAIN_CSV = "/data/math_train.json"
     PATH_TEST_CSV = "/data/math_test.json"
